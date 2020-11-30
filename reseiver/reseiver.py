@@ -1,11 +1,6 @@
 import sys
 import pika
 
-
-def callback(ch, method, properties, body):
-    print("[x] Received --> %r" % body, file=sys.stdout)
-
-
 credentials = pika.PlainCredentials(username='user', password='password')
 
 connection = pika.BlockingConnection(
@@ -15,6 +10,11 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 channel.queue_declare(queue='privat')
+
+
+def callback(ch, method, properties, body):
+    print("[x] Received --> %r" % body, file=sys.stdout)
+
 
 channel.basic_consume(queue='privat', on_message_callback=callback, auto_ack=True)
 

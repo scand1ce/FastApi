@@ -6,4 +6,4 @@ WORKDIR /sender/
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8000 8080
+EXPOSE 8000

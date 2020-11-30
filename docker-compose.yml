@@ -1,0 +1,41 @@
+# docker run -d --hostname my-rabbit --name some-rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password rabbitmq:3-management
+
+version: '3.3'
+
+services:
+    rabbitmq:
+        container_name: rabbitmq
+        image: 'rabbitmq:3-management'
+
+        ports:
+            - '5672:5672'
+            - '8080:15672'
+
+        environment:
+            - RABBITMQ_DEFAULT_USER=user
+            - RABBITMQ_DEFAULT_PASS=password
+        restart: always
+        privileged: true
+
+
+    sender:
+        container_name: sender
+        build: sender/
+        ports:
+            - '8000:8000'
+
+        depends_on:
+            -   rabbitmq
+            -   reseiver
+        restart: on-failure
+        entrypoint: python app.py
+
+
+    reseiver:
+        container_name: reseiver
+        build: reseiver/
+        network_mode: host
+        depends_on:
+            - rabbitmq
+        restart: on-failure
+        entrypoint: python reseiver.py
